@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
 
     # Local apps
+    'users',
     'api',
 ]
 
@@ -124,7 +125,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 # Custom User Model
-AUTH_USER_MODEL = 'api.User'
+AUTH_USER_MODEL = 'users.User'
 
 # Django REST Framework settings
 REST_FRAMEWORK = {

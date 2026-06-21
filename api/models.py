@@ -1,15 +1,6 @@
 import uuid
 from django.db import models
-from django.contrib.auth.models import AbstractUser
-
-class User(AbstractUser):
-    """
-    Custom User model extending Django's AbstractUser.
-    Includes additional fields for GDPR compliance.
-    """
-    age = models.PositiveIntegerField(null=True, blank=True)
-    can_be_contacted = models.BooleanField(default=False)
-    can_data_be_shared = models.BooleanField(default=False)
+from django.conf import settings
 
 class Project(models.Model):
     """
@@ -25,7 +16,7 @@ class Project(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
     type = models.CharField(max_length=50, choices=TYPE_CHOICES)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='authored_projects')
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='authored_projects')
     created_time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -36,7 +27,7 @@ class Contributor(models.Model):
     Link table defining the relationship between a User and a Project.
     Only contributors can access projects and their related issues/comments.
     """
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='contributions')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='contributions')
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='contributors')
     created_time = models.DateTimeField(auto_now_add=True)
 
@@ -70,8 +61,8 @@ class Issue(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='issues')
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='authored_issues')
-    assignee = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_issues')
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='authored_issues')
+    assignee = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_issues')
     priority = models.CharField(max_length=20, choices=PRIORITY_CHOICES)
     tag = models.CharField(max_length=20, choices=TAG_CHOICES)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='To Do')
@@ -89,7 +80,7 @@ class Comment(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     description = models.TextField()
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name='comments')
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='authored_comments')
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='authored_comments')
     created_time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
