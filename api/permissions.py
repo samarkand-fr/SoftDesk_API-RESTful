@@ -13,9 +13,12 @@ class IsProjectContributor(permissions.BasePermission):
         # Si c'est un Project
         if isinstance(obj, Project):
             project = obj
-        # Si c'est une autre ressource liée à un projet (ex: Issue, Comment)
+        # Si c'est une Issue
         elif hasattr(obj, 'project'):
             project = obj.project
+        # Si c'est un Comment
+        elif hasattr(obj, 'issue'):
+            project = obj.issue.project
         else:
             return False
             

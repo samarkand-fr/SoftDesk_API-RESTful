@@ -13,7 +13,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         Un utilisateur ne peut voir que les projets sur lesquels il est contributeur.
         """
         user = self.request.user
-        return Project.objects.filter(contributors__user=user)
+        return Project.objects.filter(contributors__user=user).select_related('author').distinct()
 
     def perform_create(self, serializer):
         """
@@ -33,7 +33,7 @@ class ContributorViewSet(viewsets.ModelViewSet):
         On ne liste que les contributeurs liés aux projets dont l'utilisateur fait partie.
         """
         user = self.request.user
-        queryset = Contributor.objects.filter(project__contributors__user=user).distinct()
+        queryset = Contributor.objects.filter(project__contributors__user=user).select_related('user', 'project').distinct()
         
         # Filtre optionnel par projet : /api/contributors/?project=1
         project_id = self.request.query_params.get('project')
@@ -52,7 +52,7 @@ class IssueViewSet(viewsets.ModelViewSet):
         Un utilisateur ne peut voir que les issues des projets sur lesquels il est contributeur.
         """
         user = self.request.user
-        queryset = Issue.objects.filter(project__contributors__user=user).distinct()
+        queryset = Issue.objects.filter(project__contributors__user=user).select_related('project', 'author', 'assignee').distinct()
         
         project_id = self.request.query_params.get('project')
         if project_id is not None:
@@ -82,7 +82,7 @@ class CommentViewSet(viewsets.ModelViewSet):
         sur lesquels il est contributeur.
         """
         user = self.request.user
-        queryset = Comment.objects.filter(issue__project__contributors__user=user).distinct()
+        queryset = Comment.objects.filter(issue__project__contributors__user=user).select_related('issue', 'author').distinct()
         
         issue_id = self.request.query_params.get('issue')
         if issue_id is not None:
