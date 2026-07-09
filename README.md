@@ -49,16 +49,6 @@ poetry run python manage.py runserver
 
 The API will be accessible at: `http://127.0.0.1:8000/`
 
-## 🧪 Running Tests
-
-A comprehensive suite of automated tests covers permissions, GDPR compliance, and right-to-be-forgotten rules. To run the tests:
-
-```bash
-poetry run python manage.py test api users
-```
-
----
-
 ## 📡 API Endpoints (HTTP Requests)
 
 *Note: Except for User Registration and Token generation, all endpoints require an `Authorization` header with a valid JWT token:*  
