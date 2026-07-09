@@ -1,3 +1,2 @@
-from django.test import TestCase
-
-# Create your tests here.
+# Tests are performed manually using Postman.
+# Automated tests are not required for this project.
